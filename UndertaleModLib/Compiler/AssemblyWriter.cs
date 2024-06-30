@@ -2244,11 +2244,14 @@ namespace UndertaleModLib.Compiler
                 else if (s.Kind == Parser.Statement.StatementKind.ExprFuncName)
                 {
                     bool isStructDef = s.Text.StartsWith("___struct___");
+                    bool isGmlObject = s.Text.Contains("_gml_Object_");
+
                     // Until further notice, I'm assuming this only comes up in 2.3 script definition.
+                    // make sure that in gml objects we strip out the name
                     cw.varPatches.Add(new VariablePatch()
                     {
                         Target = cw.EmitRef(Opcode.Pop, DataType.Variable, DataType.Variable),
-                        Name = s.Text,
+                        Name = isGmlObject ? s.Text.Substring(0, s.Text.IndexOf("_gml_Object_")) : s.Text,
                         InstType = isStructDef ? InstanceType.Static : InstanceType.Self,
                         VarType = VariableType.StackTop
                     });
